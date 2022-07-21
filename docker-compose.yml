@@ -19,8 +19,6 @@ services:
     environment:
       ES_JAVA_OPTS: "-Xmx256m -Xms256m"
       ELASTIC_PASSWORD: changeme
-      # Use single node discovery in order to disable production mode and avoid bootstrap checks
-      # see https://www.elastic.co/guide/en/elasticsearch/reference/current/bootstrap-checks.html
       discovery.type: single-node
     networks:
       - elk
@@ -68,39 +66,6 @@ services:
       - elk
     depends_on:
       - elasticsearch
-
-  web-back:
-    build:
-      context: web/back/
-      dockerfile: back.Dockerfile
-    ports:
-    - "5000:5000"
-    expose:
-      - "5000"
-    networks:
-      - elk
-    depends_on:
-      - kibana
-
-  web-front:
-    build:
-      context: web/front/
-      dockerfile: front.Dockerfile
-    ports:
-    - "8080:8080"
-    expose:
-      - "8080"
-    networks:
-      - elk
-
-  mongodb:
-      image: mongo
-      ports:
-          - "${MONGO_PORT}:27017"
-      volumes:
-          - "${PWD}/mongodb/data:/data/db"
-      env_file:
-          - .env
 
 networks:
   elk:
